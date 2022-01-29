@@ -18,8 +18,8 @@ let package = Package(
                 "Files", 
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]),
-        .testTarget(
-            name: "DaybookGenTests",
-            dependencies: ["DaybookGen"]),
+        // .testTarget(
+        //     name: "DaybookGenTests",
+        //     dependencies: ["DaybookGen"]),
     ]
 )
