@@ -1,5 +1,5 @@
 ---
-date: 
+date: %date%
 category: daybook
 ---
 
@@ -9,8 +9,16 @@ category: daybook
 - [ ] Check Schedule
 - [ ] Prepare ToDos for tommorrow
 
+
 **QUESTIONS**
+
 
 
 Work Log
 ========
+
+
+
+Next
+====
+(Tasks for tommorrow)
