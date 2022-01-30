@@ -5,16 +5,16 @@ import Foundation
 @main
 struct DaybookGen: ParsableCommand {
     
-    static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
+    static let dateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate]
         return formatter
     }()
     
     @Argument(help: "The template file to use.")
     var template: String = "sample_data/templates/daily.md"
     
-    @Argument(help: "The date to use for a new file.")
+    @Option(name: .shortAndLong, help: "The date to use for a new file. (default: today)")
     var date: String?
     
     @Argument(help: "The daybook directory to use.")
