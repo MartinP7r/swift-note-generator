@@ -23,18 +23,27 @@ struct DaybookGen: ParsableCommand {
     mutating func run() throws {
         let date = date ?? String(Self.dateFormatter.string(from: Date()))
         let monthlyFolderName = String(date.prefix(7))
+        let array = monthlyFolderName.components(separatedBy: "-")
+        let yearString = array[0]
+        let monthString = array[1]
+
         let daybookFolder = try Folder(path: daybookDir)
 
         // Create monthly folder if not present
-        if !daybookFolder.subfolders.contains(where: { $0.name == monthlyFolderName }) {
-            try daybookFolder.createSubfolder(at: monthlyFolderName)
+        if !daybookFolder.subfolders.contains(where: { $0.name == yearString }) {
+            try daybookFolder.createSubfolder(at: yearString)
         }
+        let yearlyFolder = try daybookFolder.subfolder(at: yearString)
+
+        if !yearlyFolder.subfolders.contains(where: { $0.name == monthString }) {
+            try yearlyFolder.createSubfolder(at: monthString)
+        }
+        let monthlyFolder = try yearlyFolder.subfolder(at: monthString)
 
         let template = try File(path: template)
         let templateText = try template.readAsString()
         let newText = templateText.replacingOccurrences(of: "%date%", with: date)
 
-        let monthlyFolder = try daybookFolder.subfolder(at: monthlyFolderName)
 
         try monthlyFolder.createFile(at: "\(date).md",
                                      contents: newText.data(using: .utf8))
