@@ -1,6 +1,4 @@
 *
 !.gitignore
-!2021-11
-!2021-11/.gitignore
-!2021-12
-!2021-12/.gitignore
+!2021
+!2021/.gitignore
