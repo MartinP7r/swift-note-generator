@@ -5,9 +5,9 @@ import Foundation
 @main
 struct DaybookGen: ParsableCommand {
     
-    static let dateFormatter: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate]
+    static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
         return formatter
     }()
     
@@ -22,6 +22,7 @@ struct DaybookGen: ParsableCommand {
 
     mutating func run() throws {
         let date = date ?? String(Self.dateFormatter.string(from: Date()))
+        print(date)
         let monthlyFolderName = String(date.prefix(7))
         let array = monthlyFolderName.components(separatedBy: "-")
         let yearString = array[0]
