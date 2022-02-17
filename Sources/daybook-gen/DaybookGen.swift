@@ -22,7 +22,6 @@ struct DaybookGen: ParsableCommand {
 
     mutating func run() throws {
         let date = date ?? String(Self.dateFormatter.string(from: Date()))
-        print(date)
         let monthlyFolderName = String(date.prefix(7))
         let array = monthlyFolderName.components(separatedBy: "-")
         let yearString = array[0]
@@ -49,6 +48,7 @@ struct DaybookGen: ParsableCommand {
         try monthlyFolder.createFile(at: "\(date).md",
                                      contents: newText.data(using: .utf8))
 
+        print("\(monthlyFolder.path)\(date).md")
     }
 
 }
