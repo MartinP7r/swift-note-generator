@@ -3,7 +3,7 @@ import Files
 import Foundation
 
 @main
-struct DaybookGen: ParsableCommand {
+struct NoteGen: ParsableCommand {
 
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -61,7 +61,7 @@ struct DaybookGen: ParsableCommand {
             dateString = String(Self.dateFormatter.string(from: Date()))
         }
         guard let dateString = dateString else { throw Error.invalidDate }
-        date = DaybookGen.dateFormatter.date(from: dateString)
+        date = NoteGen.dateFormatter.date(from: dateString)
         let monthlyFolderName = String(dateString.prefix(7))
         let arr = monthlyFolderName.components(separatedBy: "-")
         yearString = arr[0]

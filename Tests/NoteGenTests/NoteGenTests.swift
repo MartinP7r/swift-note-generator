@@ -1,7 +1,7 @@
 import XCTest
 import class Foundation.Bundle
 
-final class DaybookGenTests: XCTestCase {
+final class NoteGenTests: XCTestCase {
     func testExample() throws {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
@@ -15,7 +15,7 @@ final class DaybookGenTests: XCTestCase {
         // Mac Catalyst won't have `Process`, but it is supported for executables.
         #if !targetEnvironment(macCatalyst)
 
-        let fooBinary = productsDirectory.appendingPathComponent("DaybookGen")
+        let fooBinary = productsDirectory.appendingPathComponent("NoteGen")
 
         let process = Process()
         process.executableURL = fooBinary

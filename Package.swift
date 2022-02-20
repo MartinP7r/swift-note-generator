@@ -4,10 +4,10 @@
 import PackageDescription
 
 let package = Package(
-    name: "DaybookGen",
+    name: "NoteGen",
     platforms: [.macOS(.v10_12)],
     products: [
-        .executable(name: "daybook-gen", targets: ["daybook-gen"]),
+        .executable(name: "note-gen", targets: ["note-gen"]),
     ],
     dependencies: [
         .package(url: "https://github.com/JohnSundell/Files", from: "4.2.0"),
@@ -15,13 +15,13 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "daybook-gen",
+            name: "note-gen",
             dependencies: [ 
                 "Files", 
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]),
-        // .testTarget(
-        //     name: "DaybookGenTests",
-        //     dependencies: ["DaybookGen"]),
+         .testTarget(
+             name: "NoteGenTests",
+             dependencies: ["note-gen"]),
     ]
 )

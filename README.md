@@ -1,4 +1,4 @@
-# DaybookGen
+# Note Generator
 
 A description of this package.
 
