@@ -9,10 +9,11 @@ category: daybook
 - [ ] Check Schedule
 - [ ] Prepare ToDos for tommorrow
 
+%todos%
 
 **QUESTIONS**
 
-
+%questions%
 
 Work Log
 ========
