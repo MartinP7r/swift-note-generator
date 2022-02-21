@@ -1,8 +1,29 @@
+import Files
 import XCTest
 import class Foundation.Bundle
 
 final class NoteGenTests: XCTestCase {
-    func testExample() throws {
+
+    private var templateFolder: Folder!
+    private var daybookFolder: Folder!
+
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        templateFolder = try Folder(path: productsDirectory.path)
+            .createSubfolderIfNeeded(withName: ".templates")
+        try templateFolder.empty()
+        daybookFolder = try Folder(path: productsDirectory.path)
+            .createSubfolderIfNeeded(withName: ".templates")
+        try daybookFolder.empty()
+    }
+
+    override func tearDownWithError() throws {
+        try templateFolder.delete()
+        try daybookFolder.delete()
+        try super.tearDownWithError()
+    }
+
+    func test_daybookIsCreated() throws {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
@@ -15,10 +36,12 @@ final class NoteGenTests: XCTestCase {
         // Mac Catalyst won't have `Process`, but it is supported for executables.
         #if !targetEnvironment(macCatalyst)
 
-        let fooBinary = productsDirectory.appendingPathComponent("NoteGen")
+        print(productsDirectory)
+        let fooBinary = productsDirectory.appendingPathComponent("note-gen")
 
         let process = Process()
         process.executableURL = fooBinary
+        process.arguments = ["--date 2021-12-31"]
 
         let pipe = Pipe()
         process.standardOutput = pipe
@@ -34,6 +57,19 @@ final class NoteGenTests: XCTestCase {
     }
 
     /// Returns path to the built products directory.
+//    var productsDirectory: URL {
+//      #if os(macOS)
+//        for bundle in Bundle.allBundles where bundle.bundlePath.hasSuffix(".xctest") {
+//            return bundle.bundleURL.deletingLastPathComponent()
+//        }
+//        fatalError("couldn't find the products directory")
+//      #else
+//        return Bundle.main.bundleURL
+//      #endif
+//    }
+}
+
+extension XCTest {
     var productsDirectory: URL {
       #if os(macOS)
         for bundle in Bundle.allBundles where bundle.bundlePath.hasSuffix(".xctest") {
@@ -43,5 +79,9 @@ final class NoteGenTests: XCTestCase {
       #else
         return Bundle.main.bundleURL
       #endif
+    }
+
+    func prepareTemplateFolder() {
+
     }
 }
