@@ -1,3 +1,4 @@
+import ArgumentParser
 import Files
 import XCTest
 import class Foundation.Bundle
@@ -6,82 +7,73 @@ final class NoteGenTests: XCTestCase {
 
     private var templateFolder: Folder!
     private var daybookFolder: Folder!
+    private var productsFolder: Folder!
+
+    private var dateString = "2021-12-31"
+    private var pathString = "daybook/2021/12/2021-12-31.md"
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        templateFolder = try Folder(path: productsDirectory.path)
-            .createSubfolderIfNeeded(withName: ".templates")
+
+        productsFolder = try Folder(path: productsDirectory.path)
+        templateFolder = try productsFolder.createSubfolderIfNeeded(withName: "templates")
         try templateFolder.empty()
-        daybookFolder = try Folder(path: productsDirectory.path)
-            .createSubfolderIfNeeded(withName: ".templates")
+        try templateFolder.createFile(at: "daily.md",
+                                      contents: "Today's date is %date%.".data(using: .utf8))
+        daybookFolder = try productsFolder.createSubfolderIfNeeded(withName: "daybook")
         try daybookFolder.empty()
+
+        XCTAssertFalse(productsFolder.containsFile(at: pathString))
     }
 
     override func tearDownWithError() throws {
-        try templateFolder.delete()
-        try daybookFolder.delete()
+        try? templateFolder.delete()
+        try? daybookFolder.delete()
         try super.tearDownWithError()
     }
 
-    func test_daybookIsCreated() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-
-        // Some of the APIs that we use below are available in macOS 10.13 and above.
-        guard #available(macOS 10.13, *) else {
-            return
-        }
-
-        // Mac Catalyst won't have `Process`, but it is supported for executables.
-        #if !targetEnvironment(macCatalyst)
-
-        print(productsDirectory)
-        let fooBinary = productsDirectory.appendingPathComponent("note-gen")
-
-        let process = Process()
-        process.executableURL = fooBinary
-        process.arguments = ["--date 2021-12-31"]
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-
-        try process.run()
-        process.waitUntilExit()
-
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8)
-
-        XCTAssertEqual(output, "Hello, world!\n")
-        #endif
+    func test_output() throws {
+        try AssertExecuteCommand(
+            command: "note-gen --date \(dateString)",
+            expected: pathString
+        )
     }
 
-    /// Returns path to the built products directory.
-//    var productsDirectory: URL {
-//      #if os(macOS)
-//        for bundle in Bundle.allBundles where bundle.bundlePath.hasSuffix(".xctest") {
-//            return bundle.bundleURL.deletingLastPathComponent()
-//        }
-//        fatalError("couldn't find the products directory")
-//      #else
-//        return Bundle.main.bundleURL
-//      #endif
-//    }
+    func test_output_short() throws {
+        try AssertExecuteCommand(
+            command: "note-gen -d \(dateString)",
+            expected: pathString
+        )
+    }
+
+    func test_output_parameter_verbose() throws {
+        try AssertExecuteCommand(
+            command: "note-gen journal -d \(dateString)",
+            expected: pathString
+        )
+    }
+
+    func test_fileIsCreated() throws {
+        XCTAssertFalse(productsFolder.containsFile(at: pathString))
+        try AssertExecuteCommand(
+            command: "note-gen -d \(dateString)",
+            expected: pathString
+        )
+        XCTAssertTrue(productsFolder.containsFile(at: pathString))
+    }
+
+    func test_dateReplacesPlaceholder() throws {
+        XCTAssertFalse(productsFolder.containsFile(at: pathString))
+        try AssertExecuteCommand(
+            command: "note-gen -d \(dateString)",
+            expected: pathString
+        )
+
+        let file = try productsFolder.file(at: pathString)
+        let contents = try file.readAsString()
+        XCTAssertEqual(contents, "Today's date is \(dateString).")
+    }
+
 }
 
-extension XCTest {
-    var productsDirectory: URL {
-      #if os(macOS)
-        for bundle in Bundle.allBundles where bundle.bundlePath.hasSuffix(".xctest") {
-            return bundle.bundleURL.deletingLastPathComponent()
-        }
-        fatalError("couldn't find the products directory")
-      #else
-        return Bundle.main.bundleURL
-      #endif
-    }
 
-    func prepareTemplateFolder() {
-
-    }
-}

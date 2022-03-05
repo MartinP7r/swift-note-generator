@@ -6,13 +6,9 @@ import Foundation
 extension NoteGen {
 
     struct Journal: ParsableCommand {
-        @Option(name: [.long, .short],
-            help: "The date to use for a new file. Format: yyyy-MM-dd (default: today)",
-                  transform: parseDate(NoteGen.dateFormatter))
-        var date: Date
 
         @Argument(help: "The template file to use.")
-        var template: String = ".templates/daily.md"
+        var template: String = "templates/daily.md"
 
         //    // TODO: enum .today .tommorrow .date(String)
         //    @Option(name: [.customLong("date"), .short],
@@ -20,6 +16,10 @@ extension NoteGen {
         //    var dateString: String?
         //
         //    private var date: Date!
+        @Option(name: [.long, .short],
+                help: "The date to use for a new file. Format: yyyy-MM-dd (default: today)",
+                transform: parseDate(NoteGen.dateFormatter))
+        var date: Date = Date()
         private var year: Int { Calendar.current.component(.year, from: date) }
         private var month: Int { Calendar.current.component(.month, from: date) }
 
@@ -35,7 +35,6 @@ extension NoteGen {
         //    @Flag(help: "Move questions from previous day")
 
         mutating func run() throws {
-            //        try initializeProps()
             let dateString = NoteGen.dateFormatter.string(from: date)  // else { throw Error.invalidDate }
 
             let monthlyFolder = try getMonthlyFolder()
@@ -52,7 +51,7 @@ extension NoteGen {
 
             try monthlyFolder.createFile(at: "\(dateString).md",
                                          contents: newText.data(using: .utf8))
-
+            print("\(monthlyFolder.path)\(dateString).md")
         }
 
         private func getMonthlyFolder() throws -> Folder {

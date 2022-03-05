@@ -16,12 +16,18 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "note-gen",
-            dependencies: [ 
-                "Files", 
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            dependencies: [
+                "Files",
+                    .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]),
-         .testTarget(
-             name: "NoteGenTests",
-             dependencies: ["note-gen"]),
+        .testTarget(
+            name: "NoteGenTests",
+            dependencies: ["note-gen"],
+            resources: [
+                // Copy Tests/ExampleTests/Resources directories as-is.
+                // Use to retain directory structure.
+                // Will be at top level in bundle.
+                .copy("Resources"),
+            ]),
     ]
 )
