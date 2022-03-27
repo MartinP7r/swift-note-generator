@@ -24,6 +24,8 @@ extension NoteGen {
 
         //    private var yearString: String!  // = "2022"
         //    private var monthString: String! // = "01"
+        @Flag(help: "Overwrite the file if it already exists")
+        var overwrite: Bool = false
 
         @Argument(help: "The directory to use.")
         var daybookDir = "daybook"
@@ -49,7 +51,7 @@ extension NoteGen {
             }
 
             let pathString = "\(monthlyFolder.path)\(dateString).md"
-            if monthlyFolder.containsFile(at: "\(dateString).md") {
+            if !overwrite && monthlyFolder.containsFile(at: "\(dateString).md") {
                 print("File already exists: \(pathString)")
             } else {
                 try monthlyFolder.createFile(at: "\(dateString).md",
