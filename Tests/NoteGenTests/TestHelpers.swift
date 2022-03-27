@@ -20,17 +20,12 @@ extension XCTest {
 #endif
     }
 
-    func prepareTemplateFolder() {
-
-    }
-
-
     public func AssertExecuteCommand(
         command: String,
         expected: String? = nil,
         exitCode: ExitCode = .success,
-        file: StaticString = #file, line: UInt = #line) throws
-    {
+        file: StaticString = #file, line: UInt = #line
+    ) throws {
         let splitCommand = command.split(separator: " ")
         let arguments = splitCommand.dropFirst().map(String.init)
 
@@ -80,7 +75,6 @@ extension XCTest {
 #else
         throw XCTSkip("Not supported on this platform")
 #endif
-
     }
 
     private func AssertEqualStringsIgnoringTrailingWhitespace(_ string1: String, _ string2: String, file: StaticString = #file, line: UInt = #line) {

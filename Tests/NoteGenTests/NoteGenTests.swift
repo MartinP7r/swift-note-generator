@@ -74,6 +74,27 @@ final class NoteGenTests: XCTestCase {
         XCTAssertEqual(contents, "Today's date is \(dateString).")
     }
 
+    func test_fileIsNotOverwritten() throws {
+        try productsFolder.createFile(at: pathString, contents: "some content".data(using: .utf8))
+        XCTAssertTrue(productsFolder.containsFile(at: pathString))
+
+        try AssertExecuteCommand(
+            command: "note-gen -d \(dateString)",
+            expected: "File already exists: \(pathString)"
+        )
+
+        XCTAssertEqual("some content", try productsFolder.file(at: pathString).readAsString())
+    }
+
+    func test_overwriteOption() throws {
+        try productsFolder.createFile(at: pathString, contents: "some content".data(using: .utf8))
+        XCTAssertTrue(productsFolder.containsFile(at: pathString))
+
+        try AssertExecuteCommand(
+            command: "note-gen -d \(dateString) --overwrite",
+            expected: pathString //"File already exists: \(pathString)"
+        )
+
+        XCTAssertNotEqual("some content", try productsFolder.file(at: pathString).readAsString())
+    }
 }
-
-
