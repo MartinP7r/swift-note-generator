@@ -2,7 +2,6 @@ import ArgumentParser
 import Files
 import Foundation
 
-
 extension NoteGen {
 
     struct Journal: ParsableCommand {
@@ -49,9 +48,14 @@ extension NoteGen {
                 newText = newText.replacingOccurrences(of: "%todos%", with: "")
             }
 
-            try monthlyFolder.createFile(at: "\(dateString).md",
-                                         contents: newText.data(using: .utf8))
-            print("\(monthlyFolder.path)\(dateString).md")
+            let pathString = "\(monthlyFolder.path)\(dateString).md"
+            if monthlyFolder.containsFile(at: "\(dateString).md") {
+                print("File already exists: \(pathString)")
+            } else {
+                try monthlyFolder.createFile(at: "\(dateString).md",
+                                             contents: newText.data(using: .utf8))
+                print("\(monthlyFolder.path)\(dateString).md")
+            }
         }
 
         private func getMonthlyFolder() throws -> Folder {
@@ -78,10 +82,9 @@ extension NoteGen {
         }
 
         private func getPreviousDaysQuestions() {
-
-
             //        print("\(monthlyFolder.path)\(date).md")
-        }    }
+        }
+    }
 }
 
 extension NoteGen {
