@@ -97,4 +97,13 @@ final class NoteGenTests: XCTestCase {
 
         XCTAssertNotEqual("some content", try productsFolder.file(at: pathString).readAsString())
     }
+
+    func test_singleDigitMonth() throws {
+        let dateString = "2022-05-02"
+        let pathString = "daybook/2022/05/2022-05-02.md"
+        try AssertExecuteCommand(
+            command: "note-gen -d \(dateString)",
+            expected: pathString
+        )
+    }
 }

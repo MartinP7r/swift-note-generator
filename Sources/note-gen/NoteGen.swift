@@ -62,7 +62,11 @@ extension NoteGen {
 
         private func getMonthlyFolder() throws -> Folder {
             let yearString = String(year)
-            let monthString = String(month).padding(toLength: 2, withPad: "0", startingAt: 0)
+            let monthString = String(
+                String(String(month).reversed())
+                    .padding(toLength: 2, withPad: "0", startingAt: 0)
+                    .reversed()
+            )
 
             let daybookFolder = try Folder(path: daybookDir)
             // Create monthly folder if not present
