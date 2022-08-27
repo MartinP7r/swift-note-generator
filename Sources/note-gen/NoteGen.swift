@@ -22,6 +22,8 @@ extension NoteGen {
         private var year: Int { Calendar.current.component(.year, from: date) }
         private var month: Int { Calendar.current.component(.month, from: date) }
 
+        @Flag(name: [.long, .customLong("tmr")]) var tomorrow = false
+
         //    private var yearString: String!  // = "2022"
         //    private var monthString: String! // = "01"
         @Flag(help: "Overwrite the file if it already exists")
@@ -36,7 +38,11 @@ extension NoteGen {
         //    @Flag(help: "Move questions from previous day")
 
         mutating func run() throws {
-            let dateString = NoteGen.dateFormatter.string(from: date)  // else { throw Error.invalidDate }
+            if tomorrow,
+               let newDate = Calendar.current.date(byAdding: .day, value: 1, to: date) {
+                date = newDate
+            }
+            let dateString = NoteGen.dateFormatter.string(from: date)
 
             let monthlyFolder = try getMonthlyFolder()
 

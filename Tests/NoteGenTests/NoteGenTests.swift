@@ -46,6 +46,16 @@ final class NoteGenTests: XCTestCase {
         )
     }
 
+    func test_output_tomorrow() throws {
+        let expectedString = prepareExpectedForTestTomorrow()
+        try AssertExecuteCommand(command: "note-gen --tomorrow", expected: expectedString)
+    }
+
+    func test_output_tmr() throws {
+        let expectedString = prepareExpectedForTestTomorrow()
+        try AssertExecuteCommand(command: "note-gen --tmr", expected: expectedString)
+    }
+
     func test_output_parameter_verbose() throws {
         try AssertExecuteCommand(
             command: "note-gen journal -d \(dateString)",
@@ -105,5 +115,17 @@ final class NoteGenTests: XCTestCase {
             command: "note-gen -d \(dateString)",
             expected: pathString
         )
+    }
+}
+
+private extension NoteGenTests {
+    func prepareExpectedForTestTomorrow() -> String {
+        let cal = Calendar.current
+        let tmr = cal.date(byAdding: .day, value: 1, to: Date())!
+        let expectedDateString = String(tmr.formatted(.iso8601).prefix(10))
+        let comps = cal.dateComponents([.day, .month, .year], from: tmr)
+        let month = comps.month.map { $0 < 10 ? "0\($0)" : "\($0)" }!
+        let year = "\(comps.year!)"
+        return "daybook/\(year)/\(month)/\(expectedDateString).md"
     }
 }
