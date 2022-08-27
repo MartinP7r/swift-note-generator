@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "NoteGen",
-    platforms: [.macOS(.v10_12)],
+    platforms: [.macOS(.v12)],
     products: [
         .executable(name: "note-gen", targets: ["note-gen"]),
     ],
