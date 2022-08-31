@@ -3,11 +3,12 @@ import Files
 import XCTest
 import class Foundation.Bundle
 
+// TODO: rename to `JournalTests`
 final class NoteGenTests: XCTestCase {
 
+    private var productsFolder: Folder!
     private var templateFolder: Folder!
     private var daybookFolder: Folder!
-    private var productsFolder: Folder!
 
     private var dateString = "2021-12-31"
     private var pathString = "daybook/2021/12/2021-12-31.md"
@@ -93,7 +94,7 @@ final class NoteGenTests: XCTestCase {
             expected: "File already exists: \(pathString)"
         )
 
-        XCTAssertEqual("some content", try productsFolder.file(at: pathString).readAsString())
+        XCTAssertEqual("some content", try getFileContents())
     }
 
     func test_overwriteOption() throws {
@@ -102,10 +103,10 @@ final class NoteGenTests: XCTestCase {
 
         try AssertExecuteCommand(
             command: "note-gen -d \(dateString) --overwrite",
-            expected: pathString //"File already exists: \(pathString)"
+            expected: pathString
         )
 
-        XCTAssertNotEqual("some content", try productsFolder.file(at: pathString).readAsString())
+        XCTAssertNotEqual("some content", try getFileContents())
     }
 
     func test_singleDigitMonth() throws {
@@ -115,6 +116,34 @@ final class NoteGenTests: XCTestCase {
             command: "note-gen -d \(dateString)",
             expected: pathString
         )
+    }
+
+    func test_tagsAreReplaced() throws {
+        let tags = ["one", "two", "three", "swift"]
+        let parameterString = tags.joined(separator: " ")
+        let resultString = tags.joined(separator: ", ")
+
+        let template = """
+            ---
+            date: %date%
+            category: daybook
+            tags: [%tags%]
+            ---
+            """
+        let templateAfter = """
+            ---
+            date: \(dateString)
+            category: daybook
+            tags: [\(resultString)]
+            ---
+            """
+
+        try templateFolder.empty()
+        try templateFolder.createFile(at: "daily.md",
+                                      contents: template.data(using: .utf8))
+
+        try AssertExecuteCommand(command: "note-gen -d \(dateString) --tags \(parameterString)")
+        XCTAssertEqual(templateAfter, try getFileContents())
     }
 }
 
@@ -127,5 +156,9 @@ private extension NoteGenTests {
         let month = comps.month.map { $0 < 10 ? "0\($0)" : "\($0)" }!
         let year = "\(comps.year!)"
         return "daybook/\(year)/\(month)/\(expectedDateString).md"
+    }
+
+    private func getFileContents() throws -> String {
+        try productsFolder.file(at: pathString).readAsString()
     }
 }
