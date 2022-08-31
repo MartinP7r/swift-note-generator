@@ -2,19 +2,33 @@ import ArgumentParser
 import Files
 import Foundation
 
-extension NoteGen {
+@main
+struct NoteGen: ParsableCommand {
 
+    static var configuration = CommandConfiguration(
+        abstract: "A utility for creating markdown files based on templates.",
+        //        version: "1.0.0",
+        subcommands: [Journal.self, Snippet.self],
+        defaultSubcommand: Journal.self
+    )
+
+    static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    enum Error: Swift.Error {
+        case invalidDate
+    }
+}
+
+extension NoteGen {
     struct Journal: ParsableCommand {
 
         @Argument(help: "The template file to use.")
-        var template: String = "templates/daily.md"
+        var template: String = "templates/daily.md" // ".note-gen/templates/daily.md"
 
-        //    // TODO: enum .today .tommorrow .date(String)
-        //    @Option(name: [.customLong("date"), .short],
-        //            help: "The date to use for a new file. Format: yyyy-MM-dd (default: today)")
-        //    var dateString: String?
-        //
-        //    private var date: Date!
         @Option(name: [.long, .short],
                 help: "The date to use for a new file. Format: yyyy-MM-dd (default: today)",
                 transform: parseDate(NoteGen.dateFormatter))
@@ -24,18 +38,22 @@ extension NoteGen {
 
         @Flag(name: [.long, .customLong("tmr")]) var tomorrow = false
 
-        //    private var yearString: String!  // = "2022"
-        //    private var monthString: String! // = "01"
         @Flag(help: "Overwrite the file if it already exists")
         var overwrite: Bool = false
 
         @Argument(help: "The directory to use.")
         var daybookDir = "daybook"
 
-        @Flag(help: "Move unfinished TODOs from earlier days")
-        var moveTodos = false
+        @Option
+        private var category: String = "daybook"
 
-        //    @Flag(help: "Move questions from previous day")
+        @Option(name: [.long, .short], parsing: .upToNextOption)
+        private var tags: [String] = []
+
+        @Option
+        private var moveTemplateKeywords: [String] = []
+//        @Flag(help: "Move unfinished TODOs from earlier days")
+//        var moveTodos = false
 
         mutating func run() throws {
             if tomorrow,
@@ -50,10 +68,15 @@ extension NoteGen {
             let templateText = try template.readAsString()
             var newText = templateText.replacingOccurrences(of: "%date%", with: dateString)
 
-            if moveTodos {
-                getPreviousDaysQuestions()
-            } else {
-                newText = newText.replacingOccurrences(of: "%todos%", with: "")
+            // TODO: move keywords instead of `moveTodos` below
+//            if moveTodos {
+//                getPreviousDaysQuestions()
+//            } else {
+//                newText = newText.replacingOccurrences(of: "%todos%", with: "")
+//            }
+
+            if !tags.isEmpty {
+                newText = newText.replacingOccurrences(of: "%tags%", with: tags.joined(separator: ", "))
             }
 
             let pathString = "\(monthlyFolder.path)\(dateString).md"
@@ -126,25 +149,4 @@ struct Options: ParsableArguments {
     @Argument(help: "The date to use for a new file. Format: yyyy-MM-dd (default: today)",
               transform: parseDate(NoteGen.dateFormatter))
     var date: Date = Date()
-}
-
-@main
-struct NoteGen: ParsableCommand {
-
-    static var configuration = CommandConfiguration(
-        abstract: "A utility for creating markdown files based on templates.",
-        //        version: "1.0.0",
-        subcommands: [Journal.self, Snippet.self],
-        defaultSubcommand: Journal.self)
-
-    static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter
-    }()
-
-    enum Error: Swift.Error {
-        case invalidDate
-    }
-
 }
