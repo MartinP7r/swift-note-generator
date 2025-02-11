@@ -7,7 +7,7 @@ struct NoteGen: ParsableCommand {
 
     static var configuration = CommandConfiguration(
         abstract: "A utility for creating markdown files based on templates.",
-        //        version: "1.0.0",
+        version: "0.0.8",
         subcommands: [Journal.self, Snippet.self],
         defaultSubcommand: Journal.self
     )

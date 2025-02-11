@@ -12,11 +12,11 @@
       },
       {
         "package": "swift-argument-parser",
-        "repositoryURL": "https://github.com/apple/swift-argument-parser",
+        "repositoryURL": "https://github.com/martinp7r/swift-argument-parser",
         "state": {
-          "branch": null,
-          "revision": "e1465042f195f374b94f915ba8ca49de24300a0d",
-          "version": "1.0.2"
+          "branch": "test_lib",
+          "revision": "427e312f7d228ef3a933a35629fadc634e40bd0b",
+          "version": null
         }
       }
     ]

@@ -1,4 +1,5 @@
 import ArgumentParser
+import ArgumentParserTestHelpers
 import Files
 import XCTest
 import class Foundation.Bundle
